@@ -5,7 +5,12 @@ import {headers} from "next/headers";
 import {redirect} from "next/navigation";
 
 const Layout = async ({ children }: { children : React.ReactNode }) => {
-    const session = await auth.api.getSession({ headers: await headers() })
+    let session = null;
+    try {
+        session = await auth.api.getSession({ headers: await headers() });
+    } catch (e) {
+        console.warn("Session check in auth layout skipped (database unavailable):", e instanceof Error ? e.message : e);
+    }
 
     if(session?.user) redirect('/')
 

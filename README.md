@@ -34,7 +34,7 @@ HyperStocks-App/
 ├── database/               # Mongoose connection and data models
 ├── hooks/                  # Custom React hooks
 ├── lib/                    # Server actions, external clients, utilities
-├── middleware.ts           # Route protection and auth redirects
+├── proxy.ts                # Route protection and auth redirects (Next.js 16 proxy)
 └── types/                  # TypeScript definitions
 ```
 

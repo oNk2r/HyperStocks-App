@@ -4,7 +4,12 @@ import {headers} from "next/headers";
 import {redirect} from "next/navigation";
 
 const Layout = async ({ children }: { children : React.ReactNode }) => {
-    const session = await auth.api.getSession({ headers: await headers() });
+    let session = null;
+    try {
+        session = await auth.api.getSession({ headers: await headers() });
+    } catch (e) {
+        console.warn("Session check in root layout failed (database unavailable):", e instanceof Error ? e.message : e);
+    }
 
     if(!session?.user) redirect('/sign-in');
 
