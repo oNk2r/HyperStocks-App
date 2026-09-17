@@ -37,10 +37,11 @@ export async function createAlert(
 ) {
     if (!symbol) throw new Error("Symbol is required");
 
-    const { userId } = await getCurrentUser();
+    const { userId, email } = await getCurrentUser();
 
     await AlertModel.create({
         userId,
+        userEmail: email,
         symbol: symbol.toUpperCase(),
         condition,
         targetPrice,
@@ -70,6 +71,7 @@ export async function getAlertsBySymbol(symbol?: string) {
     return alerts.map((a) => ({
         _id: String(a._id),
         userId: String(a.userId),
+        userEmail: a.userEmail,
         symbol: a.symbol,
         targetPrice: a.targetPrice,
         condition: a.condition,
@@ -77,6 +79,7 @@ export async function getAlertsBySymbol(symbol?: string) {
         createdAt: a.createdAt ? new Date(a.createdAt).toISOString() : undefined,
     }));
 }
+
 
 /* --------------------------------------------------
    Delete Alert

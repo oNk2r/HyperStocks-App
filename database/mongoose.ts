@@ -30,8 +30,9 @@ export const connectToDatabase = async () => {
         cached.promise = null;
         throw err;
     }
-
-    console.log(`Connected to database ${process.env.NODE_ENV} - ${MONGODB_URI}`);
+    const host = mongoose.connection?.host || 'unknown';
+    const dbName = mongoose.connection?.name || 'unknown';
+    console.log(`Connected to database [env=${process.env.NODE_ENV}, host=${host}, db=${dbName}]`);
 
     return cached.conn;
 }

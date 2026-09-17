@@ -8,32 +8,50 @@ export const checkPriceAlerts = inngest.createFunction(
     { id: "price-alert-check" },
     { cron: "*/2 * * * *" },
     async () => {
-        await connectToDatabase();
+        const mongoose = await connectToDatabase();
+        const db = mongoose.connection.db;
 
         const alerts = await AlertModel.find({ status: "active" });
 
         for (const alert of alerts) {
-            const quote = await getStockQuote(alert.symbol);
-            const currentPrice = quote.c;
+            try {
+                const quote = await getStockQuote(alert.symbol);
+                const currentPrice = quote.c;
 
-            const hit =
-                alert.condition === "above"
-                    ? currentPrice >= alert.targetPrice
-                    : currentPrice <= alert.targetPrice;
+                const hit =
+                    alert.condition === "above"
+                        ? currentPrice >= alert.targetPrice
+                        : currentPrice <= alert.targetPrice;
 
-            if (!hit) continue;
+                if (!hit) continue;
 
-            // Send email
-            await sendAlertEmail({
-                email: alert.userId, // see NOTE below
-                symbol: alert.symbol,
-                price: currentPrice,
-                target: alert.targetPrice,
-                condition: alert.condition,
-            });
+                // Resolve valid email recipient
+                let recipientEmail = alert.userEmail;
+                if (!recipientEmail && db) {
+                    const user = await db.collection("user").findOne({
+                        $or: [{ id: alert.userId }, { _id: alert.userId }]
+                    });
+                    recipientEmail = user?.email;
+                }
 
-            // DELETE after trigger (your requirement)
-            await AlertModel.deleteOne({ _id: alert._id });
+                if (recipientEmail) {
+                    await sendAlertEmail({
+                        email: recipientEmail,
+                        symbol: alert.symbol,
+                        price: currentPrice,
+                        target: alert.targetPrice,
+                        condition: alert.condition,
+                    });
+                } else {
+                    console.warn(`Could not find recipient email for alert ${alert._id} (userId: ${alert.userId})`);
+                }
+
+                // Delete or deactivate triggered alert
+                await AlertModel.deleteOne({ _id: alert._id });
+            } catch (err) {
+                console.error(`Error processing alert ${alert._id} for ${alert.symbol}:`, err);
+            }
         }
     }
 );
+

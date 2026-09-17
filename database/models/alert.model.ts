@@ -2,6 +2,7 @@ import { Schema, model, models } from "mongoose";
 
 export interface Alert {
     userId: string;
+    userEmail?: string;
     symbol: string;
     targetPrice: number;
     condition: "above" | "below";
@@ -13,6 +14,7 @@ export interface Alert {
 const AlertSchema = new Schema<Alert>(
     {
         userId: { type: String, required: true, index: true },
+        userEmail: { type: String, trim: true, lowercase: true },
         symbol: { type: String, required: true, uppercase: true },
         targetPrice: { type: Number, required: true },
         condition: { type: String, enum: ["above", "below"], required: true },
@@ -23,6 +25,7 @@ const AlertSchema = new Schema<Alert>(
         },
         triggeredAt: Date,
     },
+
     { timestamps: { createdAt: true, updatedAt: false } }
 );
 
