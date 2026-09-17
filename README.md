@@ -1,133 +1,103 @@
-# 📈 HyperStocks – Real-Time Stock Market Dashboard
+# HyperStocks
 
-![Next.js](https://img.shields.io/badge/Next.js-13+-000000?logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3+-38B2AC?logo=tailwindcss&logoColor=white)
-![TradingView](https://img.shields.io/badge/TradingView-Widget-blue)
-![Status](https://img.shields.io/badge/Status-Active-success)
+A stock market dashboard built with Next.js, React, TypeScript, and Tailwind CSS. It integrates TradingView widgets for chart analysis, Finnhub for market quotes and news, Better-Auth for authentication, and Inngest with Nodemailer for automated price alert emails.
 
----
+## Features
 
-## 🚀 Overview
+- Real-time stock charts and market overviews using TradingView widgets
+- User authentication with session management via Better-Auth and MongoDB
+- Personal watchlist to track stocks and related company news
+- Symbol search with auto-complete
+- Price alert system with scheduled background checks via Inngest and email delivery via Nodemailer
+- Responsive dark UI built with Tailwind CSS
 
-**HyperStocks** is a modern, responsive stock market dashboard built using **Next.js**, **React**, and **TypeScript**, integrating **TradingView widgets** for real-time market data visualization.  
-The project focuses on clean UI design, performance, and scalable component architecture.
+## Tech Stack
 
----
+- Framework: Next.js (App Router)
+- Frontend: React, Tailwind CSS, Radix UI, Lucide React
+- Language: TypeScript
+- Database: MongoDB via Mongoose
+- Authentication: Better-Auth
+- Market Data: Finnhub API, TradingView Widgets
+- Background Jobs: Inngest
+- Email: Nodemailer
 
-## ✨ Features
+## Project Structure
 
-- 📊 Real-time interactive stock charts  
-- 🎯 Custom widget titles (independent of TradingView headers)  
-- 🌙 Dark-theme friendly UI  
-- 📱 Fully responsive layout  
-- 🧩 Reusable React components  
-- ⚡ Optimized TradingView script loading  
-- 🛡️ Prevents duplicate widget rendering  
-
----
-
-## 🛠️ Tech Stack
-
-| Category | Technologies |
-|--------|-------------|
-| Frontend | Next.js (App Router), React |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Charts | TradingView Embedded Widgets |
-| Tools | GitHub, VS Code |
-
----
-## 📂 Project Structure
-
-hyperstocks/
+```text
+HyperStocks-App/
 ├── app/
-│ └── (root)/
-│ └── page.tsx
-│
-├── components/
-│ └── TradingViewWidget.tsx
-│
-├── hooks/
-│ └── useTradingViewWidget.tsx
-│
-├── lib/
-│ └── utils.ts
-│
-├── public/
-│
-└── README.md
+│   ├── (auth)/             # Authentication routes (sign-in, sign-up)
+│   ├── (root)/             # Application routes (dashboard, stocks, watchlist)
+│   └── api/                # API route handlers (auth, inngest)
+├── components/             # Reusable UI and feature components
+├── database/               # Mongoose connection and data models
+├── hooks/                  # Custom React hooks
+├── lib/                    # Server actions, external clients, utilities
+├── middleware.ts           # Route protection and auth redirects
+└── types/                  # TypeScript definitions
+```
 
----
+## Getting Started
 
-## 🧠 Core Implementation
+### Prerequisites
 
-### TradingViewWidget Component
-- Displays TradingView charts  
-- Accepts dynamic widget configuration  
-- Supports custom titles  
-- Responsive and reusable  
+- Node.js 18+ (Node.js 20+ recommended)
+- MongoDB instance (local or MongoDB Atlas)
+- Finnhub API Key
 
-### useTradingViewWidget Hook
-- Dynamically injects TradingView scripts  
-- Prevents duplicate widget loading  
-- Cleans up widgets on unmount  
-- Optimized for Next.js client components  
+### Installation
 
----
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Paras-8028/HyperStocks-App.git
+   cd HyperStocks-App
+   ```
 
-## 🧪 Challenges & Solutions
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-| Challenge | Solution |
-|--------|----------|
-TradingView title not rendering | Implemented custom titles above widgets |
-Duplicate widget rendering | Controlled script injection via custom hook |
-Layout clipping | Removed overflow restrictions |
-Next.js SSR conflicts | Used `"use client"` and DOM-safe hooks |
+3. Configure environment variables:
+   Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
 
----
+   Required environment variables:
+   - `BETTER_AUTH_SECRET`: Secret key for session encryption
+   - `BETTER_AUTH_URL`: Base URL of the application (e.g., `http://localhost:3000`)
+   - `MONGODB_URI`: MongoDB connection string
+   - `FINNHUB_API_KEY`: Finnhub API key
+   - `NEXT_PUBLIC_FINNHUB_API_KEY`: Finnhub API key for client-side requests
+   - `EMAIL_USER`: SMTP email address for alert delivery
+   - `EMAIL_PASS`: SMTP application password
+   - `INNGEST_EVENT_KEY`: Inngest event key
+   - `INNGEST_SIGNING_KEY`: Inngest signing key
 
-## 📸 Screenshots
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-![Dashboard](./public/screenshots/dashboard.png)
+5. (Optional) Run the Inngest Dev Server for background alerts:
+   ```bash
+   npx inngest-cli@latest dev
+   ```
 
----
+The application will be running at [http://localhost:3000](http://localhost:3000).
 
-## 🔮 Future Enhancements
+## Preview
 
-- 🔐 User authentication  
-- ⭐ Stock watchlist  
-- 🔎 Symbol search and selector  
-- 🌗 Light/Dark theme toggle  
-- 📈 Advanced technical indicators  
-- 🌍 Multi-market support
- 
----
+![Dashboard Preview](./public/assets/images/dashboard-preview.png)
 
-📌 Use Cases
+## License
 
-FinTech dashboards
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-Stock analysis platforms
-
-React & Next.js learning project
-
-College mini/major project
-
-🤝 Contributing
-
-Contributions are welcome.
-Fork the repository and submit a pull request.
-
-📄 License
-
-This project is licensed under the MIT License.
-
-👨‍💻 Author
+## Author
 
 Maharudra Patil
-
-🔗 LinkedIn: https://linkedin.com/in/maharudra-patil
-💻 GitHub: https://github.com/Paras-8028
-
+- LinkedIn: https://linkedin.com/in/maharudra-patil
+- GitHub: https://github.com/Paras-8028
