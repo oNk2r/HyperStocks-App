@@ -4,7 +4,6 @@ import { connectToDatabase } from "@/database/mongoose";
 import { AlertModel } from "@/database/models/alert.model";
 import { auth } from "@/lib/better-auth/auth";
 import { headers } from "next/headers";
-import { getStockQuote } from "@/lib/actions/finnhub.actions";
 
 /* --------------------------------------------------
    Helper: get current user
@@ -48,30 +47,39 @@ export async function createAlert(
         status: "active",
     });
 
-
     return { success: true };
 }
-
 
 /* --------------------------------------------------
    Get Alerts for Symbol
 -------------------------------------------------- */
 export async function getAlertsBySymbol(symbol?: string) {
-    // ✅ HARD GUARD (this fixes crash)
     if (!symbol || typeof symbol !== "string") {
         return [];
     }
 
     const { userId } = await getCurrentUser();
 
-    return await AlertModel.find({
+    const alerts = await AlertModel.find({
         userId,
         symbol: symbol.toUpperCase(),
-    }).sort({ createdAt: -1 });
+    })
+        .sort({ createdAt: -1 })
+        .lean();
+
+    return alerts.map((a) => ({
+        _id: String(a._id),
+        userId: String(a.userId),
+        symbol: a.symbol,
+        targetPrice: a.targetPrice,
+        condition: a.condition,
+        status: a.status,
+        createdAt: a.createdAt ? new Date(a.createdAt).toISOString() : undefined,
+    }));
 }
 
 /* --------------------------------------------------
-   Delete Alert ✅ (THIS FIXES YOUR ERROR)
+   Delete Alert
 -------------------------------------------------- */
 export async function deleteAlert(alertId: string) {
     const { userId } = await getCurrentUser();
@@ -83,3 +91,4 @@ export async function deleteAlert(alertId: string) {
 
     return { success: true };
 }
+

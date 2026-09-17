@@ -12,6 +12,7 @@ export default function WatchlistNews({ symbols }: Props) {
     const [loading, setLoading] = useState(true);
     const [articles, setArticles] = useState<MarketNewsArticle[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const symbolsKey = symbols.join(",");
 
     useEffect(() => {
         let mounted = true;
@@ -40,7 +41,8 @@ export default function WatchlistNews({ symbols }: Props) {
         return () => {
             mounted = false;
         };
-    }, [symbols.join(",")]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [symbolsKey]);
 
     if (loading) {
         return (
@@ -68,7 +70,7 @@ export default function WatchlistNews({ symbols }: Props) {
 
     return (
         <div className="space-y-6">
-            {articles.map((article) => (
+            {articles.map((article, index) => (
                 <a
                     key={article.id ? `news-${article.id}` : `news-${index}`}
                     href={article.url}

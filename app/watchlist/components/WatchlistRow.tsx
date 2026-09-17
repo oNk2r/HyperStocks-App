@@ -44,8 +44,8 @@ const WatchlistRow = ({
             await createAlert(item.symbol, condition, target);
             toast.success(`Alert set ${condition} $${target}`);
             setTargetPrice("");
-        } catch (e: any) {
-            toast.error(e?.message || "Failed to create alert");
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : "Failed to create alert");
         } finally {
             setLoading(false);
         }

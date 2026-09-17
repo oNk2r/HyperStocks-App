@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     CommandDialog,
     CommandEmpty,
@@ -13,14 +13,12 @@ import Link from "next/link";
 import { searchStocks } from "@/lib/actions/finnhub.actions";
 import { useDebounce } from "@/hooks/useDebounce";
 import WatchlistButton from "@/components/WatchlistButton";
-import { toggleWatchlist } from "@/lib/actions/watchlist.actions";
-import { toast } from "sonner";
 
 export default function SearchCommand({
-                                          renderAs = "button",
-                                          label = "Add stock",
-                                          initialStocks,
-                                      }: SearchCommandProps) {
+    renderAs = "button",
+    label = "Add stock",
+    initialStocks = [],
+}: SearchCommandProps) {
     const [open, setOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
@@ -45,7 +43,7 @@ export default function SearchCommand({
     }, []);
 
     /* Search */
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         if (!isSearchMode) {
             setStocks(initialStocks);
             return;
@@ -60,13 +58,13 @@ export default function SearchCommand({
         } finally {
             setLoading(false);
         }
-    };
+    }, [isSearchMode, initialStocks, searchTerm]);
 
     const debouncedSearch = useDebounce(handleSearch, 300);
 
     useEffect(() => {
         debouncedSearch();
-    }, [searchTerm]);
+    }, [debouncedSearch]);
 
     const handleSelectStock = () => {
         setOpen(false);
@@ -74,37 +72,6 @@ export default function SearchCommand({
         setStocks(initialStocks);
     };
 
-    // /* ⭐ Toggle Watchlist (single source of truth) */
-    // const handleToggleWatchlist = async (
-    //     symbol: string,
-    //     company: string
-    // ) => {
-    //     // Optimistic UI
-    //     setStocks((prev) =>
-    //         prev.map((s) =>
-    //             s.symbol === symbol
-    //                 ? { ...s, isInWatchlist: !s.isInWatchlist }
-    //                 : s
-    //         )
-    //     );
-    //
-    //     try {
-    //         await toggleWatchlist(symbol, company);
-    //     } catch (e: any) {
-    //         // Rollback
-    //         setStocks((prev) =>
-    //             prev.map((s) =>
-    //                 s.symbol === symbol
-    //                     ? { ...s, isInWatchlist: !s.isInWatchlist }
-    //                     : s
-    //             )
-    //         );
-    //
-    //         toast.error(
-    //             e?.message || "Failed to update watchlist"
-    //         );
-    //     }
-    // };
 
     return (
         <>

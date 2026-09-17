@@ -28,13 +28,15 @@ export function useWatchlist() {
     const loadWatchlist = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await getUserWatchlist();
+            const data = await getUserWatchlist();
+            const mapped: WatchlistItem[] = (data || []).map((item) => ({
+                _id: item.id,
+                symbol: item.symbol,
+                company: item.company,
+                addedAt: item.addedAt ? new Date(item.addedAt) : undefined,
+            }));
 
-            if (!res.success) {
-                throw new Error(res.error);
-            }
-
-            setItems(res.data);
+            setItems(mapped);
             setError(null);
         } catch (err) {
             console.error('useWatchlist load error:', err);

@@ -28,7 +28,8 @@ export default function useTradingViewWidget(
         return () => {
             container.innerHTML = "";
         };
-    }, [scriptUrl]); // ❗ DO NOT depend on config
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scriptUrl]); // Intentionally omit config to prevent widget reloads on every parent render
 
     return containerRef;
 }

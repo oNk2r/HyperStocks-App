@@ -119,7 +119,10 @@ export const sendDailyNewsSummary = inngest.createFunction(
         });
 
         // 3️⃣ AI summary
-        const userNewsSummaries = [];
+        const userNewsSummaries: Array<{
+            user: { id: string; email: string; name: string };
+            newsContent: string | null;
+        }> = [];
 
         for (const { user, articles } of results) {
             try {
@@ -155,11 +158,13 @@ export const sendDailyNewsSummary = inngest.createFunction(
             } catch (e) {
                 console.error(
                     "Failed to summarize news for:",
-                    user.email
+                    user.email,
+                    e
                 );
                 userNewsSummaries.push({ user, newsContent: null });
             }
         }
+
 
         // 4️⃣ Send emails
         await step.run("send-news-emails", async () => {

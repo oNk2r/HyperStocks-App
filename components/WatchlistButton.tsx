@@ -14,8 +14,8 @@ const WatchlistButton = ({
         try {
             const result = await toggleWatchlist(symbol, company);
             onWatchlistChange?.(symbol, result.added);
-        } catch (e: any) {
-            toast.error(e?.message ?? "Failed to update watchlist");
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : "Failed to update watchlist");
         }
     };
 

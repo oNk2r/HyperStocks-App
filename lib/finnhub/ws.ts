@@ -1,3 +1,4 @@
+export type FinnhubQuote = { symbol: string; price: number };
 type QuoteListener = (data: FinnhubQuote) => void;
 
 class FinnhubWS {

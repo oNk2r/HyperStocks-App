@@ -4,15 +4,30 @@ import { useEffect, useState } from "react";
 import { getAlertsBySymbol } from "@/lib/actions/alert.actions";
 import WatchlistAlertItem from "./WatchlistAlertItem";
 
+interface AlertItem {
+    _id: string;
+    condition: "above" | "below";
+    targetPrice: number;
+    status: "active" | "triggered";
+}
+
 export default function WatchlistAlertList({
-                                               symbol,
-                                           }: {
+    symbol,
+}: {
     symbol: string;
 }) {
-    const [alerts, setAlerts] = useState<any[]>([]);
+    const [alerts, setAlerts] = useState<AlertItem[]>([]);
 
     useEffect(() => {
-        getAlertsBySymbol(symbol).then(setAlerts);
+        let mounted = true;
+        getAlertsBySymbol(symbol).then((data) => {
+            if (mounted) {
+                setAlerts((data || []) as unknown as AlertItem[]);
+            }
+        });
+        return () => {
+            mounted = false;
+        };
     }, [symbol]);
 
     if (alerts.length === 0)

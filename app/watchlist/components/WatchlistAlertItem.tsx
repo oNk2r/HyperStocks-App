@@ -2,7 +2,17 @@
 
 import { deleteAlert } from "@/lib/actions/alert.actions";
 
-export default function WatchlistAlertItem({ alert }: any) {
+interface WatchlistAlertItemProps {
+    alert: {
+        _id: string;
+        condition: "above" | "below";
+        targetPrice: number;
+        status: "active" | "triggered";
+    };
+    onDelete?: (id: string) => void;
+}
+
+export default function WatchlistAlertItem({ alert, onDelete }: WatchlistAlertItemProps) {
     return (
         <div className="flex justify-between items-center bg-gray-800 p-3 rounded">
             <div>
@@ -23,11 +33,15 @@ export default function WatchlistAlertItem({ alert }: any) {
             </div>
 
             <button
-                onClick={() => deleteAlert(alert._id)}
+                onClick={async () => {
+                    await deleteAlert(alert._id);
+                    onDelete?.(alert._id);
+                }}
                 className="text-red-400 hover:underline text-sm"
             >
                 Delete
             </button>
+
         </div>
     );
 }

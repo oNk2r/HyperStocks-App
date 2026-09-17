@@ -26,7 +26,7 @@ export default function WatchlistAlertInput({
             <select
                 value={condition}
                 onChange={(e) =>
-                    setCondition(e.target.value as any)
+                    setCondition(e.target.value as "above" | "below")
                 }
                 className="bg-black border border-gray-700 text-sm rounded px-2 py-2"
             >

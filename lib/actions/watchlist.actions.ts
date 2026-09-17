@@ -58,15 +58,20 @@ export async function getWatchlistSymbolsByEmail(email: string): Promise<string[
 }
 
 /** Used by /watchlist page */
-export async function getUserWatchlist(email: string) {
-    if (!email) return [];
-
+export async function getUserWatchlist(email?: string) {
     try {
+        let targetEmail = email;
+        if (!targetEmail) {
+            const currentUser = await resolveCurrentUser().catch(() => null);
+            targetEmail = currentUser?.email;
+        }
+        if (!targetEmail) return [];
+
         const mongoose = await connectToDatabase();
         const db = mongoose.connection.db;
         if (!db) throw new Error("MongoDB connection not found");
 
-        const user = await db.collection("user").findOne({ email });
+        const user = await db.collection("user").findOne({ email: targetEmail });
         if (!user) return [];
 
         const userId = user.id || String(user._id);
@@ -115,9 +120,10 @@ export async function addToWatchlist(symbol: string, company: string) {
         });
 
         return { success: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
+        const mongoError = err as { code?: number };
         // Duplicate symbol (unique index)
-        if (err?.code === 11000) {
+        if (mongoError?.code === 11000) {
             return { success: true };
         }
 
@@ -129,7 +135,7 @@ export async function addToWatchlist(symbol: string, company: string) {
 /* =====================================================
    REMOVE FROM WATCHLIST
 ===================================================== */
-export async function removeFromWatchlist(symbol: string) {
+export async function removeFromWatchlist(symbol: string): Promise<{ success: boolean; error?: string }> {
     try {
         const { userId } = await resolveCurrentUser();
 
@@ -141,9 +147,10 @@ export async function removeFromWatchlist(symbol: string) {
         return { success: true };
     } catch (err) {
         console.error("removeFromWatchlist error:", err);
-        throw new Error("Failed to remove from watchlist");
+        return { success: false, error: err instanceof Error ? err.message : "Failed to remove from watchlist" };
     }
 }
+
 
 
 /* =====================================================

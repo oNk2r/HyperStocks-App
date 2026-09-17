@@ -1,5 +1,5 @@
 let socket: WebSocket | null = null;
-let listeners = new Map<string, (price: number) => void>();
+const listeners = new Map<string, (price: number) => void>();
 
 export function connectFinnhub() {
     if (socket) return;
@@ -10,13 +10,14 @@ export function connectFinnhub() {
 
     socket.onmessage = event => {
         const msg = JSON.parse(event.data);
-        if (msg.type !== "trade") return;
+        if (msg.type !== "trade" || !Array.isArray(msg.data)) return;
 
-        msg.data.forEach((trade: any) => {
+        msg.data.forEach((trade: { s: string; p: number }) => {
             listeners.get(trade.s)?.(trade.p);
         });
     };
 }
+
 
 export function subscribe(symbol: string, cb: (price: number) => void) {
     connectFinnhub();
