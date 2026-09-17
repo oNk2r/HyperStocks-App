@@ -34,7 +34,13 @@ const SignUp = () => {
     const onSubmit = async (data: SignUpFormData) => {
         try {
             const result = await signUpWithEmail(data);
-            if(result.success) router.push('/');
+            if (result.success) {
+                toast.success('Account created successfully');
+                router.push('/');
+                router.refresh();
+            } else {
+                toast.error(result.error || 'Sign up failed');
+            }
         } catch (e) {
             console.error(e);
             toast.error('Sign up failed', {
@@ -51,7 +57,7 @@ const SignUp = () => {
                 <InputField
                     name="fullName"
                     label="Full Name"
-                    placeholder="Paras Patil"
+                    placeholder="Alex Morgan"
                     register={register}
                     error={errors.fullName}
                     validation={{ required: 'Full name is required', minLength: 2 }}
@@ -60,11 +66,18 @@ const SignUp = () => {
                 <InputField
                     name="email"
                     label="Email"
-                    placeholder="Paras_@gmail.com"
+                    placeholder="alex@example.com"
                     register={register}
                     error={errors.email}
-                    validation={{ required: 'Email name is required', pattern: /^\w+@\w+\.\w+$/, message: 'Email address is required' }}
+                    validation={{
+                        required: 'Email is required',
+                        pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            message: 'Invalid email address',
+                        },
+                    }}
                 />
+
 
                 <InputField
                     name="password"

@@ -22,7 +22,10 @@ const UserDropdown = ({ user, initialStocks }: {user: User, initialStocks: Stock
     const handleSignOut = async () => {
         await signOut();
         router.push("/sign-in");
-    }
+        router.refresh();
+    };
+
+    const initial = user?.name?.[0]?.toUpperCase() ?? "U";
 
     return (
         <DropdownMenu>
@@ -31,7 +34,7 @@ const UserDropdown = ({ user, initialStocks }: {user: User, initialStocks: Stock
                     <Avatar className="h-8 w-8">
                         <AvatarImage src="https://imgs.search.brave.com/R50kdUfVcORkEuU3KQUI1xEa_KQYCVlm3rt55PCb7Ng/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTUv/Mzg2LzUxOC9zbWFs/bC8zZC1yZW5kZXIt/b2YtYS1tYW4tcy1i/dXN0LXN0eWxpemVk/LWNhcnRvb24tYXZh/dGFyLWJsdWUtYW5k/LXRlYWwtY2xvdGhp/bmctZGV0YWlsZWQt/ZmFjaWFsLWZlYXR1/cmVzLXBuZy5wbmc" />
                         <AvatarFallback className="bg-green-500 text-green-900 text-sm font-bold">
-                            {user.name[0]}
+                            {initial}
                         </AvatarFallback>
                     </Avatar>
                     <div className="hidden md:flex flex-col items-start">
@@ -47,9 +50,10 @@ const UserDropdown = ({ user, initialStocks }: {user: User, initialStocks: Stock
                         <Avatar className="h-10 w-10">
                             <AvatarImage src="https://imgs.search.brave.com/R50kdUfVcORkEuU3KQUI1xEa_KQYCVlm3rt55PCb7Ng/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTUv/Mzg2LzUxOC9zbWFs/bC8zZC1yZW5kZXIt/b2YtYS1tYW4tcy1i/dXN0LXN0eWxpemVk/LWNhcnRvb24tYXZh/dGFyLWJsdWUtYW5k/LXRlYWwtY2xvdGhp/bmctZGV0YWlsZWQt/ZmFjaWFsLWZlYXR1/cmVzLXBuZy5wbmc" />
                             <AvatarFallback className="bg-green-500 text-green-900 text-sm font-bold">
-                                {user.name[0]}
+                                {initial}
                             </AvatarFallback>
                         </Avatar>
+
                         <div className="flex flex-col">
                             <span className='text-base font-medium text-gray-400'>
                                 {user.name}

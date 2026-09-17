@@ -7,9 +7,20 @@ import {
     TECHNICAL_ANALYSIS_WIDGET_CONFIG,
     COMPANY_FINANCIALS_WIDGET_CONFIG,
 } from "@/lib/constants";
+import { auth } from "@/lib/better-auth/auth";
+import { headers } from "next/headers";
+import { getWatchlistSymbolsByEmail } from "@/lib/actions/watchlist.actions";
 
 export default async function StockDetails({ params }: StockDetailsPageProps) {
     const { symbol } = await params;
+    const upperSymbol = symbol.toUpperCase();
+
+    const session = await auth.api.getSession({ headers: await headers() });
+    const userSymbols = session?.user?.email
+        ? await getWatchlistSymbolsByEmail(session.user.email)
+        : [];
+    const isInWatchlist = userSymbols.includes(upperSymbol);
+
     const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
     const card =
@@ -68,11 +79,12 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
                             </div>
 
                             <WatchlistButton
-                                symbol={symbol.toUpperCase()}
-                                company={symbol.toUpperCase()}
-                                isInWatchlist={false}
+                                symbol={upperSymbol}
+                                company={upperSymbol}
+                                isInWatchlist={isInWatchlist}
                                 type="icon"
                             />
+
                         </div>
 
                         {/* Technical analysis */}
